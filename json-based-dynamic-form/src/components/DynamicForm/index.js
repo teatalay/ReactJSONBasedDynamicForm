@@ -145,10 +145,10 @@ class DynamicForm extends PureComponent {
   onSubmit = e => {
     e.preventDefault();
     const { onSubmit } = this.props;
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields((err) => {
       if (!err && onSubmit) {
-        const value = this.calculateFormValues(values);
-        onSubmit(serializeObjectWithDot(values), value);
+        const value = this.calculateFormValues(this.formObject);
+        onSubmit(serializeObjectWithDot(this.formObject), value);
       }
     });
   };

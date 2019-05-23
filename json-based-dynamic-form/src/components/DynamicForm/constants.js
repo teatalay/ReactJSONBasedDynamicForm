@@ -239,7 +239,6 @@ export const inputTypes = {
   },
   checkbox: {
     creator: function(fieldProps = {}, wrapperProps) {
-      console.log(fieldProps)
       return (
         <Checkbox {...fieldProps} {...wrapperProps}>
           {fieldProps.noLabel && fieldProps.label}

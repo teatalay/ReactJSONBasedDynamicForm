@@ -113,6 +113,8 @@ function App() {
           Learn React
         </a>
         <DynamicForm inputs={inputs} onSubmit={onSubmit} />
+        {/* You can use url and objectKey prop to request for getting inputs 
+        from server (Server should send validations as string from response to map them)*/}
       </header>
     </div>
   );

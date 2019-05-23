@@ -33,6 +33,8 @@ import {
   hasErrors
 } from "./helpers";
 
+import "./style.scss";
+
 const FormItem = Form.Item;
 
 class DynamicForm extends PureComponent {
@@ -125,7 +127,7 @@ class DynamicForm extends PureComponent {
 
   onChange = (input, dataField, e, type, label) => {
     const { onChange } = this.props;
-    if (e) {
+    if (e !== undefined) {
       const value = getValueByInputType(e, type);
       this.setFormObject({
         ...this.formObject,
@@ -145,7 +147,7 @@ class DynamicForm extends PureComponent {
   onSubmit = e => {
     e.preventDefault();
     const { onSubmit } = this.props;
-    this.props.form.validateFields((err) => {
+    this.props.form.validateFields(err => {
       if (!err && onSubmit) {
         const value = this.calculateFormValues(this.formObject);
         onSubmit(serializeObjectWithDot(this.formObject), value);
@@ -180,7 +182,8 @@ class DynamicForm extends PureComponent {
       labelKeyName,
       multiSelect,
       relatedTo,
-      relatedKey
+      relatedKey,
+      noLabel
     } = field;
     const {
       form: { getFieldDecorator, getFieldError, isFieldTouched },
@@ -219,7 +222,8 @@ class DynamicForm extends PureComponent {
         ...(keyValueSelect && inputType.canKeyValueResult
           ? { labelInValue: true }
           : {}),
-        ...(relatedTo ? { related: this.formObject[relatedTo] } : {})
+        ...(relatedTo ? { related: this.formObject[relatedTo] } : {}),
+        ...(inputType.noLabel ? { noLabel } : {})
       },
       {
         onChange,
@@ -253,7 +257,7 @@ class DynamicForm extends PureComponent {
     const child = (
       <FormItem
         className={`ant-col-md-24 ant-col-sm-24 ant-col-xs-24`}
-        label={label}
+        label={inputType.noLabel && noLabel ? null : label}
         {...colLayoutFormItem}
         {...formItemProps}
         validateStatus={hasError ? validateStatus : ""}
@@ -285,6 +289,7 @@ class DynamicForm extends PureComponent {
       hasSubmitButton,
       layoutType,
       submitting,
+      cancelling,
       form: { getFieldsError },
       labelAlign
     } = this.props;
@@ -294,7 +299,7 @@ class DynamicForm extends PureComponent {
       colLayout = isInline ? filterLayout : formLayout;
     if (!formInputs.length) return null;
     return (
-      <Col {...colLayout}>
+      <Col className="dynamic-form" {...colLayout}>
         <Form onSubmit={this.onSubmit} labelAlign={labelAlign}>
           {isInline ? (
             <Row gutter={{ ...inputSpace }}>{formInputs}</Row>
@@ -305,8 +310,8 @@ class DynamicForm extends PureComponent {
             <Row
               className={`ant-col-md-24 ant-col-sm-24 ant-col-xs-24 ant-col-md-offset-7`}
             >
-              {hasSubmitButton && (
-                <FormItem>
+              <FormItem>
+                {hasSubmitButton && (
                   <Button
                     type="primary"
                     htmlType="submit"
@@ -315,15 +320,17 @@ class DynamicForm extends PureComponent {
                   >
                     Submit
                   </Button>
-                </FormItem>
-              )}
-              {onCancel && (
-                <FormItem
-                  className={`ant-col-md-24 ant-col-sm-24 ant-col-xs-24`}
-                >
-                  <Button onClick={onCancel}>{language["Cancel"]}</Button>
-                </FormItem>
-              )}
+                )}
+                {onCancel && (
+                  <Button
+                    className="cancel-button"
+                    onClick={onCancel}
+                    loading={cancelling}
+                  >
+                    Temizle
+                  </Button>
+                )}
+              </FormItem>
             </Row>
           )}
         </Form>
@@ -339,6 +346,7 @@ DynamicForm.defaultProps = {
   getChangeWithEnterPress: false,
   multiSelect: false,
   submitting: false,
+  cancelling: false,
   keyValueSelect: false,
   labelAlign: labelAligns.right,
   httpMethod: httpMethods.OPTIONS
@@ -383,6 +391,7 @@ DynamicForm.propTypes = {
   keyValueSelect: PropTypes.bool,
   url: PropTypes.string,
   submitting: PropTypes.bool,
+  cancelling: PropTypes.bool,
   httpMethod: PropTypes.string,
   labelAlign: PropTypes.oneOf([labelAligns.left, labelAligns.right]),
   objectKey: PropTypes.string

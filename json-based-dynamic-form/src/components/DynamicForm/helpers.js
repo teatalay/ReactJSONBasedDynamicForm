@@ -1,9 +1,8 @@
 import moment from "moment";
 import { inputTypes } from "./constants";
-import { defaultDateValueFormat, defaultDateFormat } from "../../constants";
+import { defaultDateFormat, defaultDateValueFormat } from "../../constants";
 
-
-export function getValueByInputType(e, type) {
+export function getValueByInputType(e, type, field) {
   switch (type) {
     case inputTypes.input:
     case inputTypes.password:
@@ -13,10 +12,32 @@ export function getValueByInputType(e, type) {
     case inputTypes.checkbox:
       return e.target.checked;
     case inputTypes.datepicker:
-      return (
-        moment(e, defaultDateFormat).format(defaultDateValueFormat) +
-        "T00:00:00Z"
-      );
+      return e && {
+        value: moment(e, defaultDateFormat)
+          .format(defaultDateValueFormat)
+          .concat("T00:00:00Z"),
+        label: e.format(defaultDateFormat)
+      };
+    case inputTypes.dateRangePicker:
+      if (!e)
+        return null;
+      const { start, end } = e;
+      const { startValueKey = "startValue", endValueKey = "endValue" } = field;
+      let startValue = moment(start, defaultDateFormat)
+        .format(defaultDateValueFormat);
+      let endValue = moment(end, defaultDateFormat)
+        .format(defaultDateValueFormat);
+      if (field.withTimeZone) {
+        startValue = startValue.concat("T00:00:00Z");
+        endValue = endValue.concat("T00:00:00Z");
+      }
+      return {
+        key: {
+          [startValueKey]: startValue,
+          [endValueKey]: endValue
+        },
+        label: `${start.format(defaultDateFormat)}-${end.format(defaultDateFormat)}`
+      };
     case inputTypes.select:
       return e;
     default:

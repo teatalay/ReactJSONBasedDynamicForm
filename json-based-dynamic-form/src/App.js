@@ -5,6 +5,7 @@ import { validationTypes } from "./constants/commonTypes";
 import logo from "./logo.svg";
 import "antd/dist/antd.css";
 import "./App.css";
+import { getColorsURL, getAllGroupsURL } from "./constants/serviceUrls";
 
 const DynamicForm = DynamicFormCreator("test");
 const inputs = [
@@ -71,9 +72,27 @@ const inputs = [
     key: "is_active",
     name: "Durum",
     inputType: inputTypes.checkbox.alias,
-    fieldProps: {
-      label: "Durum"
-    }
+    noLabel: false
+  },
+  {
+    id: 8,
+    inputType: inputTypes.remoteselect.alias,
+    key: "state",
+    name: "Colors",
+    url: getColorsURL,
+    valueKeyName: "id",
+    labelKeyName: "name",
+    objectKey: "results"
+  },
+  {
+    id: 9,
+    inputType: inputTypes.autocomplete.alias,
+    key: "state",
+    name: "Groups",
+    url: getAllGroupsURL,
+    valueKeyName: "id",
+    labelKeyName: "name",
+    objectKey: "results"
   }
 ];
 
@@ -82,7 +101,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
+        <p className="App-paragraph">
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
@@ -93,8 +112,8 @@ function App() {
         >
           Learn React
         </a>
+        <DynamicForm inputs={inputs} onSubmit={onSubmit} />
       </header>
-      <DynamicForm inputs={inputs} onSubmit={onSubmit} />
     </div>
   );
 }

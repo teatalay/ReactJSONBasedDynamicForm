@@ -1,14 +1,16 @@
 import React from "react";
 import { Input, Checkbox, Radio, Select, DatePicker } from "antd";
+
 import RemoteSelect from "../RemoteSelect";
 import AutoComplete from "../AutoComplete";
+import DateRangePicker from "../DateRangePicker";
+
 import { isDefinedAndNotEmpty } from "../../utils";
 import { defaultDateFormat } from "../../constants";
 
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-
 export const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -125,6 +127,19 @@ export const inputTypes = {
     },
     alias: "date"
   },
+  dateRangePicker: {
+    creator: function(fieldProps = {}, wrapperProps) {
+      const { dateFormat = defaultDateFormat } = fieldProps;
+      return (
+        <DateRangePicker
+          {...fieldProps}
+          {...wrapperProps}
+          format={dateFormat}
+        />
+      );
+    },
+    alias: "daterange"
+  },
   select: {
     creator: function(
       { options = [], initialValue, ...props } = {},
@@ -224,8 +239,14 @@ export const inputTypes = {
   },
   checkbox: {
     creator: function(fieldProps = {}, wrapperProps) {
-      return <Checkbox {...fieldProps} {...wrapperProps} />;
+      console.log(fieldProps)
+      return (
+        <Checkbox {...fieldProps} {...wrapperProps}>
+          {fieldProps.noLabel && fieldProps.label}
+        </Checkbox>
+      );
     },
+    noLabel: true,
     alias: "bool"
   }
 };

@@ -1,12 +1,23 @@
-.field-info{
-  color: #808080;
-  font-style: italic;
-  font-size: 12px;
-  position: relative;
-  top: -10px;
+.field-info {
+    color: #808080;
+    font-style: italic;
+    font-size: 12px;
+    position: relative;
+    top: -10px;
 }
-.ant-modal-body{
-  .field-info{
-    display: none;
-  }
+
+.cancel-button {
+    margin-left: 10px;
+}
+
+.ant-modal-body {
+    .field-info {
+        display: none;
+    }
+}
+
+.dynamic-form {
+    .ant-calendar-picker {
+        width: 100%;
+    }
 }
